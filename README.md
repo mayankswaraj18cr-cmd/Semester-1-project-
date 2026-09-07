@@ -1,6 +1,6 @@
 # Matrix Rank Calculator
 
-A browser-based matrix rank calculator and Programming for Problem Solving (C) mini project for GSSIPU Semester 1.
+A browser-based matrix rank calculator and Programming for Problem Solving (C) mini project for IITM BAHADURGARH CSE Semester 1.
 
 ## Contents
 
