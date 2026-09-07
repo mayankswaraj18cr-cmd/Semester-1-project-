@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Matrix Rank Calculator — C Programming Project</title>
+<style>
+  :root{
+    --bg:#0d1520;
+    --panel:#141f30;
+    --panel2:#182640;
+    --accent:#3fa9f5;
+    --accent2:#7ee0c3;
+    --text:#e8edf5;
+    --muted:#8ea0bd;
+    --danger:#ff6b6b;
+    --ok:#4ade80;
+    --border:#233350;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; padding:0; max-width:480px; margin:0 auto;
+    background:var(--bg); color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-tap-highlight-color:transparent;
+  }
+  header{
+    padding:22px 18px 16px; text-align:center;
+    background:linear-gradient(160deg,#152238,#0d1520);
+    border-bottom:1px solid var(--border);
+  }
+  header h1{margin:0 0 4px; font-size:19px; letter-spacing:.3px;}
+  header p{margin:0; color:var(--muted); font-size:12.5px;}
+  .badges{display:flex; gap:6px; justify-content:center; margin-top:10px; flex-wrap:wrap;}
+  .badge{
+    font-size:10.5px; padding:4px 9px; border-radius:20px;
+    background:var(--panel2); color:var(--accent2); border:1px solid var(--border);
+  }
+  main{padding:16px;}
+  .card{
+    background:var(--panel); border:1px solid var(--border); border-radius:14px;
+    padding:16px; margin-bottom:14px;
+  }
+  .card h2{
+    font-size:13.5px; text-transform:uppercase; letter-spacing:.6px;
+    color:var(--accent2); margin:0 0 12px; display:flex; align-items:center; gap:6px;
+  }
+  label{font-size:12.5px; color:var(--muted); display:block; margin-bottom:5px;}
+  .dims{display:flex; gap:10px;}
+  .dims > div{flex:1;}
+  input[type=number]{
+    width:100%; padding:10px; border-radius:9px; border:1px solid var(--border);
+    background:#0f1929; color:var(--text); font-size:15px;
+  }
+  input[type=number]:focus{outline:2px solid var(--accent); border-color:var(--accent);}
+  button{
+    -webkit-appearance:none; border:none; cursor:pointer;
+    font-family:inherit; font-weight:600;
+  }
+  .btn-primary{
+    width:100%; padding:13px; border-radius:10px; background:var(--accent);
+    color:#04101c; font-size:15px; margin-top:12px;
+  }
+  .btn-primary:active{transform:scale(.98);}
+  .btn-secondary{
+    width:100%; padding:11px; border-radius:10px; background:var(--panel2);
+    color:var(--text); font-size:13.5px; margin-top:8px; border:1px solid var(--border);
+  }
+  .grid-wrap{overflow-x:auto; margin-top:10px; -webkit-overflow-scrolling:touch;}
+  .matrix-grid{display:grid; gap:6px;}
+  .matrix-grid input{
+    width:52px; height:44px; text-align:center; padding:0; font-size:14px;
+  }
+  .result{
+    text-align:center; padding:18px; border-radius:12px;
+    background:radial-gradient(circle at 50% 0%, #163049, #0f1929);
+    margin-top:4px; border:1px solid var(--border);
+  }
+  .result .num{font-size:38px; font-weight:700; color:var(--accent2);}
+  .result .lbl{font-size:12px; color:var(--muted); margin-top:2px;}
+  .steps{font-size:12px; color:var(--muted); line-height:1.6; margin-top:10px; max-height:220px; overflow-y:auto; border-top:1px solid var(--border); padding-top:10px;}
+  .steps .step-title{color:var(--accent2); font-weight:600;}
+  .step-mat{
+    display:inline-block; font-family:ui-monospace,Menlo,Consolas,monospace;
+    font-size:11.5px; background:#0f1929; padding:6px 8px; border-radius:6px;
+    margin:4px 0; white-space:pre;
+  }
+  pre.code{
+    background:#0a1220; border:1px solid var(--border); border-radius:10px;
+    padding:12px; font-size:11px; line-height:1.55; overflow-x:auto;
+    font-family:ui-monospace,Menlo,Consolas,monospace; color:#c9d6ea;
+  }
+  .kw{color:#7ee0c3;} .tp{color:#3fa9f5;} .cm{color:#5b7291;} .fn{color:#ffd479;}
+  .toggle-row{display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;}
+  .toggle-row span{font-size:13px; color:var(--muted);}
+  .pill-btn{
+    font-size:11px; padding:5px 10px; border-radius:8px; background:var(--panel2);
+    color:var(--accent); border:1px solid var(--border);
+  }
+  .qa{border-bottom:1px solid var(--border); padding:10px 0;}
+  .qa:last-child{border-bottom:none;}
+  .qa .q{font-size:13px; font-weight:600; color:var(--text); margin-bottom:3px;}
+  .qa .a{font-size:12.5px; color:var(--muted);}
+  footer{
+    text-align:center; padding:18px 16px 26px; font-size:11px; color:var(--muted);
+    border-top:1px solid var(--border);
+  }
+  footer a{color:var(--accent);}
+  .err{color:var(--danger); font-size:12px; margin-top:8px; text-align:center;}
+  .concepts{display:flex; flex-wrap:wrap; gap:6px;}
+  .chip{font-size:11px; padding:5px 9px; border-radius:8px; background:var(--panel2); color:var(--text); border:1px solid var(--border);}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Matrix Rank Calculator</h1>
+  <p>Programming for Problem Solving (C) &nbsp;•&nbsp; GSSIPU Semester 1</p>
+  <div class="badges">
+    <span class="badge">Console-Based Mini Project</span>
+    <span class="badge">Beginner</span>
+  </div>
+</header>
+
+<main>
+
+  <div class="card">
+    <h2>▸ Matrix Input</h2>
+    <div class="dims">
+      <div>
+        <label>Rows</label>
+        <input type="number" id="rowsInput" min="1" max="6" value="3">
+      </div>
+      <div>
+        <label>Columns</label>
+        <input type="number" id="colsInput" min="1" max="6" value="3">
+      </div>
+    </div>
+    <button class="btn-secondary" id="buildGridBtn">Build Grid</button>
+
+    <div class="grid-wrap">
+      <div class="matrix-grid" id="matrixGrid"></div>
+    </div>
+
+    <button class="btn-primary" id="calcBtn">Calculate Rank</button>
+    <button class="btn-secondary" id="sampleBtn">Load Sample Input</button>
+    <div class="err" id="errBox"></div>
+  </div>
+
+  <div class="card" id="resultCard" style="display:none;">
+    <h2>▸ Result</h2>
+    <div class="result">
+      <div class="num" id="rankNum">—</div>
+      <div class="lbl">Rank of Matrix</div>
+    </div>
+    <div class="toggle-row" style="margin-top:12px;">
+      <span>Show Gaussian elimination steps</span>
+      <button class="pill-btn" id="toggleStepsBtn">Show</button>
+    </div>
+    <div class="steps" id="stepsBox" style="display:none;"></div>
+  </div>
+
+  <div class="card">
+    <div class="toggle-row">
+      <h2 style="margin:0;">▸ C Source Code</h2>
+      <button class="pill-btn" id="toggleCodeBtn">Show</button>
+    </div>
+    <div id="codeBox" style="display:none;">
+<pre class="code"><span class="cm">#include</span> <span class="tp">&lt;stdio.h&gt;</span>
+
+<span class="tp">int</span> <span class="fn">main</span>()
+{
+    <span class="tp">int</span> matrix[10][10];
+    <span class="tp">int</span> rows, cols;
+    <span class="tp">int</span> i, j, k;
+    <span class="tp">int</span> rank;
+
+    printf(<span class="cm">"Enter number of rows: "</span>);
+    scanf(<span class="cm">"%d"</span>, &amp;rows);
+
+    printf(<span class="cm">"Enter number of columns: "</span>);
+    scanf(<span class="cm">"%d"</span>, &amp;cols);
+
+    printf(<span class="cm">"Enter matrix elements:\n"</span>);
+
+    <span class="kw">for</span>(i = 0; i &lt; rows; i++)
+    {
+        <span class="kw">for</span>(j = 0; j &lt; cols; j++)
+        {
+            scanf(<span class="cm">"%d"</span>, &amp;matrix[i][j]);
+        }
+    }
+
+    rank = cols;
+
+    <span class="kw">for</span>(i = 0; i &lt; rank; i++)
+    {
+        <span class="kw">if</span>(matrix[i][i] != 0)
+        {
+            <span class="kw">for</span>(j = 0; j &lt; rows; j++)
+            {
+                <span class="kw">if</span>(j != i)
+                {
+                    <span class="tp">float</span> ratio =
+                    (<span class="tp">float</span>)matrix[j][i] /
+                    matrix[i][i];
+
+                    <span class="kw">for</span>(k = 0; k &lt; rank; k++)
+                    {
+                        matrix[j][k] =
+                        matrix[j][k] -
+                        ratio * matrix[i][k];
+                    }
+                }
+            }
+        }
+        <span class="kw">else</span>
+        {
+            <span class="tp">int</span> reduce = 1;
+
+            <span class="kw">for</span>(j = i + 1; j &lt; rows; j++)
+            {
+                <span class="kw">if</span>(matrix[j][i] != 0)
+                {
+                    <span class="kw">for</span>(k = 0; k &lt; rank; k++)
+                    {
+                        <span class="tp">int</span> temp =
+                        matrix[i][k];
+
+                        matrix[i][k] =
+                        matrix[j][k];
+
+                        matrix[j][k] =
+                        temp;
+                    }
+
+                    reduce = 0;
+                    <span class="kw">break</span>;
+                }
+            }
+
+            <span class="kw">if</span>(reduce)
+            {
+                rank--;
+
+                <span class="kw">for</span>(j = 0; j &lt; rows; j++)
+                {
+                    matrix[j][i] =
+                    matrix[j][rank];
+                }
+
+                i--;
+            }
+        }
+    }
+
+    printf(<span class="cm">"\nRank of Matrix = %d\n"</span>, rank);
+
+    <span class="kw">return</span> 0;
+}</pre>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>▸ Concepts Covered</h2>
+    <div class="concepts">
+      <span class="chip">Arrays</span>
+      <span class="chip">Nested Loops</span>
+      <span class="chip">Matrix Operations</span>
+      <span class="chip">Functions</span>
+      <span class="chip">Conditional Statements</span>
+      <span class="chip">User Input Handling</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>▸ Viva Questions</h2>
+    <div class="qa">
+      <div class="q">Q1. What is the rank of a matrix?</div>
+      <div class="a">The maximum number of linearly independent rows or columns.</div>
+    </div>
+    <div class="qa">
+      <div class="q">Q2. What is a square matrix?</div>
+      <div class="a">A matrix having equal rows and columns.</div>
+    </div>
+    <div class="qa">
+      <div class="q">Q3. Which data structure stores the matrix?</div>
+      <div class="a">Two-dimensional array.</div>
+    </div>
+    <div class="qa">
+      <div class="q">Q4. What is Gaussian Elimination?</div>
+      <div class="a">A method used to simplify a matrix using row operations.</div>
+    </div>
+    <div class="qa">
+      <div class="q">Q5. What is the maximum rank of a matrix?</div>
+      <div class="a">The smaller of the number of rows or columns.</div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  Matrix Rank Calculator — C Programming Mini Project<br>
+  GSSIPU Semester 1 · Mayank Swaraj<br>
+  <a href="https://github.com/mayankswaraj18cr-cmd" target="_blank">GitHub</a> ·
+  <a href="https://linkedin.com/in/mayank-swaraj-4b84b6410" target="_blank">LinkedIn</a>
+</footer>
+
+<script>
+const rowsInput = document.getElementById('rowsInput');
+const colsInput = document.getElementById('colsInput');
+const grid = document.getElementById('matrixGrid');
+const errBox = document.getElementById('errBox');
+const resultCard = document.getElementById('resultCard');
+const rankNum = document.getElementById('rankNum');
+const stepsBox = document.getElementById('stepsBox');
+const toggleStepsBtn = document.getElementById('toggleStepsBtn');
+const toggleCodeBtn = document.getElementById('toggleCodeBtn');
+const codeBox = document.getElementById('codeBox');
+
+function clampDim(v){
+  v = parseInt(v) || 1;
+  if(v < 1) v = 1;
+  if(v > 6) v = 6;
+  return v;
+}
+
+function buildGrid(prefill){
+  const rows = clampDim(rowsInput.value);
+  const cols = clampDim(colsInput.value);
+  rowsInput.value = rows; colsInput.value = cols;
+  grid.style.gridTemplateColumns = `repeat(${cols}, 52px)`;
+  grid.innerHTML = '';
+  for(let i=0;i<rows;i++){
+    for(let j=0;j<cols;j++){
+      const inp = document.createElement('input');
+      inp.type = 'number';
+      inp.id = `cell-${i}-${j}`;
+      inp.value = prefill && prefill[i] && prefill[i][j] !== undefined ? prefill[i][j] : 0;
+      grid.appendChild(inp);
+    }
+  }
+  resultCard.style.display = 'none';
+  errBox.textContent = '';
+}
+
+function readMatrix(){
+  const rows = clampDim(rowsInput.value);
+  const cols = clampDim(colsInput.value);
+  const m = [];
+  for(let i=0;i<rows;i++){
+    const row = [];
+    for(let j=0;j<cols;j++){
+      const el = document.getElementById(`cell-${i}-${j}`);
+      const val = parseFloat(el.value);
+      if(isNaN(val)) throw new Error('All matrix cells must contain a number.');
+      row.push(val);
+    }
+    m.push(row);
+  }
+  return m;
+}
+
+function fmtMat(m){
+  return m.map(r => r.map(v => (Math.abs(v) < 1e-9 ? 0 : Math.round(v*1000)/1000)).join('\t')).join('\n');
+}
+
+// Mirrors the C program's Gaussian elimination logic exactly, plus step logging
+function computeRank(matrixIn){
+  const matrix = matrixIn.map(r => r.slice());
+  const rowsCount = matrix.length;
+  let rank = matrix[0].length;
+  const log = [];
+
+  for(let i=0; i<rank; i++){
+    if(matrix[i][i] !== 0){
+      for(let j=0; j<rowsCount; j++){
+        if(j !== i){
+          const ratio = matrix[j][i] / matrix[i][i];
+          for(let k=0; k<rank; k++){
+            matrix[j][k] = matrix[j][k] - ratio * matrix[i][k];
+          }
+        }
+      }
+      log.push({title:`Eliminate column ${i+1} using pivot row ${i+1}`, snapshot: fmtMat(matrix)});
+    } else {
+      let reduce = 1;
+      for(let j=i+1; j<rowsCount; j++){
+        if(matrix[j][i] !== 0){
+          for(let k=0; k<rank; k++){
+            const temp = matrix[i][k];
+            matrix[i][k] = matrix[j][k];
+            matrix[j][k] = temp;
+          }
+          reduce = 0;
+          log.push({title:`Swap row ${i+1} and row ${j+1} (zero pivot)`, snapshot: fmtMat(matrix)});
+          break;
+        }
+      }
+      if(reduce){
+        rank--;
+        for(let j=0; j<rowsCount; j++){
+          matrix[j][i] = matrix[j][rank];
+        }
+        log.push({title:`Column ${i+1} fully zero → reduce rank to ${rank}`, snapshot: fmtMat(matrix)});
+        i--;
+      }
+    }
+  }
+  return {rank, log};
+}
+
+document.getElementById('buildGridBtn').addEventListener('click', () => buildGrid());
+
+document.getElementById('sampleBtn').addEventListener('click', () => {
+  rowsInput.value = 3; colsInput.value = 3;
+  buildGrid([[1,2,3],[2,4,6],[1,1,1]]);
+});
+
+document.getElementById('calcBtn').addEventListener('click', () => {
+  errBox.textContent = '';
+  try {
+    const m = readMatrix();
+    const {rank, log} = computeRank(m);
+    rankNum.textContent = rank;
+    resultCard.style.display = 'block';
+    stepsBox.innerHTML = log.map(s =>
+      `<div class="step-title">${s.title}</div><div class="step-mat">${s.snapshot}</div>`
+    ).join('');
+    resultCard.scrollIntoView({behavior:'smooth', block:'start'});
+  } catch(e){
+    errBox.textContent = e.message;
+  }
+});
+
+toggleStepsBtn.addEventListener('click', () => {
+  const show = stepsBox.style.display === 'none';
+  stepsBox.style.display = show ? 'block' : 'none';
+  toggleStepsBtn.textContent = show ? 'Hide' : 'Show';
+});
+
+toggleCodeBtn.addEventListener('click', () => {
+  const show = codeBox.style.display === 'none';
+  codeBox.style.display = show ? 'block' : 'none';
+  toggleCodeBtn.textContent = show ? 'Hide' : 'Show';
+});
+
+// init
+buildGrid([[1,2,3],[2,4,6],[1,1,1]]);
+</script>
+
+</body>
+</html>
